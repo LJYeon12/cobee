@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: alarm-service
+  labels:
+    app: alarm-service
+spec:
+  type: ClusterIP
+  selector:
+    app: alarm-service
+  ports:
+    - protocol: TCP
+      port: 8084
+      targetPort: 8084

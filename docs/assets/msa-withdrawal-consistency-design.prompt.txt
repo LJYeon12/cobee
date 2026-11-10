@@ -1,0 +1,45 @@
+Built-in image_gen tool; style reference: user-supplied diagram.
+
+Use case: infographic-diagram.
+Create a polished Korean software-engineering portfolio diagram by replacing the content of the supplied image while closely preserving its visual design language. The supplied image is a STYLE AND LAYOUT REFERENCE; none of its old MySQL/MongoDB/chat text should remain.
+
+Visual style: wide landscape, approximately 2:1, high resolution. White background. Two equal-width rounded white panels with thin pale-gray borders, generous padding and whitespace. Match the reference's understated flat diagram style: dark navy Korean sans-serif headings, smaller cool-gray annotations, very pale blue-gray process boxes, thin gray orthogonal arrows. Muted red #B65C57 for the left problem badge and failure box. Muted teal #2E8175 with pale mint fills for the right design badge and safeguards. No gradients, illustrations, 3D, shadows, logos, or decorative icons. Crisp Korean typography; all labels must be correctly spelled and readable at portfolio-page size.
+
+Subject: an MSA account-withdrawal race, and a PROPOSED design that prevents already-started requests from saving posts after withdrawal. The improvement is not implemented yet. The right badge MUST say "개선 설계", never imply deployed or experimentally proven results. No fabricated metrics.
+
+LEFT PANEL:
+Header badge "문제"; heading "탈퇴 후에도 이어지는 글 저장".
+After a thin divider, show a simple two-lane timing diagram. Lane headings "글 작성 요청" on the left and "탈퇴 요청" on the right.
+Writing lane starts with a rounded light-gray box "① 회원 정보 조회 성공", then a downward arrow to another box "② 지도 응답 대기".
+The withdrawal lane contains a box "③ 기존 글·회원 삭제", positioned later in time, below the waiting box but above the final write. Give the writing lane a clearly dashed waiting connector that continues past the withdrawal step to a muted-red outlined box "④ 늦은 글 저장". A small gray annotation near this final box says "앞서 조회한 회원 ID 사용".
+Arrows and relative vertical positions must make the order ① → ② → ③ → ④ unmistakable, while showing that writing and withdrawal are separate concurrent requests.
+At the bottom, a bold muted-red conclusion: "회원은 없는데 새 글이 남음".
+
+RIGHT PANEL:
+Header badge "개선 설계"; heading "DB 상태와 행 잠금으로 순서 보장".
+After a thin divider, show a wide pale-mint outlined common box:
+"모집 DB의 회원별 쓰기 상태"
+Small secondary line: "ACTIVE / BLOCKED".
+Below it, a centered small annotation "같은 상태 행을 잠금 · FOR UPDATE".
+Then split into TWO clearly separated, side-by-side vertical branches with arrows. Each branch uses only three to four compact rounded process boxes, with balanced spacing.
+
+Left branch heading "글 저장이 먼저".
+Process order, top to bottom:
+"ACTIVE 확인 · 글 저장"
+"커밋 후 잠금 해제"
+"탈퇴 차단 확정 · 글 정리"
+
+Right branch heading "탈퇴 차단이 먼저".
+Process order, top to bottom:
+"BLOCKED 확정 · 커밋"
+"늦은 요청이 상태 확인"
+"글 저장 거부"
+Use a restrained muted-red accent for the final rejection box, while the rest of this panel uses teal and neutral gray.
+
+Below both branches, a wide pale-mint conclusion box with bold teal text:
+"차단 확정 후 새 글 저장 불가".
+At the very bottom, a small teal supporting caption:
+"Gateway·Redis: 새 요청 차단 / 모집 DB: 진행 중 요청 제어".
+
+Technical accuracy: the two flows coordinate through the SAME persistent row in the recruit service's own PostgreSQL DB. The write holds its row lock through the post-save commit. If the write commits first, withdrawal cleans up that committed post. If blocking commits first, the late write is rejected. Do not depict Redis as canceling an executing request or as atomically transacting with PostgreSQL. This is a clean comparison graphic, not an implementation checklist. Keep words sparse; never add additional paragraphs.
+

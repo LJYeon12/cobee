@@ -1,0 +1,13 @@
+# Local diagnostics, plans, and generated output
+/diagnostics/
+/.local/
+/output/
+/graphify-out/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# ML sync state
+/cobee-ml/data/sync_status.json

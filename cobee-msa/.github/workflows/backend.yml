@@ -1,0 +1,66 @@
+name: Build and Push Backend Image
+
+on:
+  push:
+    branches: ["develop"]
+
+env:
+  REGISTRY: ${{ secrets.NCR_REGISTRY }}
+  REPOSITORY: ${{ secrets.NCR_REPOSITORY }}
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+
+      - name: Log in to NCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ secrets.NCR_USERNAME }}   # User Access Key ID
+          password: ${{ secrets.NCR_PASSWORD }}   # User Secret Key
+
+      - name: Build and push all services
+        run: |
+          SERVICES=(
+          "alarm-service" 
+          "apigateway-service" 
+          "chat-service" 
+          "config-service" 
+          "eureka-server" 
+          "member-service" 
+          "recruit-service"
+          )
+          
+          for SERVICE_NAME in "${SERVICES[@]}"
+          do
+            IMAGE_TAG="${{ env.REGISTRY }}/${{ env.REPOSITORY }}/$SERVICE_NAME:latest"
+            
+            echo "Building $SERVICE_NAME..."
+          
+            docker build -t "$SERVICE_NAME" \
+              -f "./$SERVICE_NAME/Dockerfile" \
+              --build-arg MODULE_NAME="$SERVICE_NAME" \
+              .
+          
+            # 2. 레지스트리 태그 지정
+            docker tag "$SERVICE_NAME" "$IMAGE_TAG"
+          
+            # 3. 이미지 푸시
+            docker push "$IMAGE_TAG"
+            
+            echo "Successfully pushed $SERVICE_NAME to $IMAGE_TAG"
+          done
+
+      - name: Image digest
+        run: echo ${{ steps.meta.outputs.digest }}

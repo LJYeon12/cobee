@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: recruit-service
+  labels:
+    app: recruit-service
+spec:
+  type: ClusterIP
+  selector:
+    app: recruit-service
+  ports:
+    - protocol: TCP
+      port: 8082
+      targetPort: 8082

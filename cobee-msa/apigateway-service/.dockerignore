@@ -1,0 +1,18 @@
+# Git 및 IDE 파일
+.git
+.gitignore
+.gradle/
+.idea/
+.vscode/
+
+# 빌드 결과물 및 임시 파일
+build/
+bin/
+target/
+
+# Gradle Wrapper 관련 파일
+gradle-wrapper.jar
+
+# 로그 및 캐시
+*.log
+tmp/

@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chat-deployment
+  labels:
+    app: chat-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: chat-service
+  template:
+    metadata:
+      labels:
+        app: chat-service
+    spec:
+      containers:
+        - name: chat-service
+          image: registry.example.com/cobee/chat-service:latest
+          ports:
+            - containerPort: 8083
+          envFrom:
+            - secretRef:
+                name: cobee-secret
+          # 환경 변수를 통해 Eureka 및 Config Server 설정
+          env:
+            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+              value: http://eureka-service:8761/eureka/
+            - name: SPRING_CLOUD_CONFIG_URI
+              value: http://config-service:8888
+          resources:
+            limits:
+              memory: "1024Mi"
+              cpu: "500m"
+            requests:
+              memory: "1024Mi"
+              cpu: "500m"
+      imagePullSecrets:
+        - name: registry-credential

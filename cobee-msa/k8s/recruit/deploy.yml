@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: recruit-deployment
+  labels:
+    app: recruit-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: recruit-service
+  template:
+    metadata:
+      labels:
+        app: recruit-service
+    spec:
+      containers:
+        - name: recruit-service
+          image: registry.example.com/cobee/recruit-service:latest
+          ports:
+            - containerPort: 8082
+          envFrom:
+            - secretRef:
+                name: cobee-secret
+          # 환경 변수를 통해 Eureka 및 Config Server 설정
+          env:
+            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+              value: http://eureka-service:8761/eureka/
+            - name: SPRING_CLOUD_CONFIG_URI
+              value: http://config-service:8888
+          resources:
+            limits:
+              memory: "1024Mi"
+              cpu: "500m"
+            requests:
+              memory: "1024Mi"
+              cpu: "500m"
+      imagePullSecrets:
+        - name: registry-credential

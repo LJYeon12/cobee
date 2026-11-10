@@ -1,0 +1,131 @@
+server:
+  port: 8080
+
+spring:
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: 2s
+  application:
+    name: apigateway-service
+  config:
+    import: "optional:configserver:"     # ★ Config Server에서 외부설정 당겨오기
+  cloud:
+    config:
+      uri: http://config-service:8888         # ★ Config Server 주소
+    gateway:
+      default-filters:
+        - name: AddRequestHeader
+          args:
+            name: X-Sync-Key
+            value: ${SYNC_SECRET_KEY}
+      server:
+        webflux:
+          routes:
+            - id: member-oauth
+              uri: lb://MEMBER-SERVICE
+              predicates:
+                - Path=/oauth2/**
+            - id: member-login
+              uri: lb://MEMBER-SERVICE
+              predicates:
+                - Path=/login/**
+            - id: member-refresh
+              uri: lb://MEMBER-SERVICE
+              predicates:
+                - Path=/auth/refresh
+            - id: member-sync
+              uri: lb://MEMBER-SERVICE
+              predicates:
+                - Path=/sync/members/**
+              filters:
+                - name: AddRequestHeader
+                  args:
+                    name: X-Sync-Key
+                    value: ${SYNC_SECRET_KEY}
+            - id: recruit-sync
+              uri: lb://RECRUIT-SERVICE
+              predicates:
+                - Path=/sync/**
+              filters:
+                - name: AddRequestHeader
+                  args:
+                    name: X-Sync-Key
+                    value: ${SYNC_SECRET_KEY}
+            - id: member-preferences
+              uri: lb://MEMBER-SERVICE
+              predicates:
+                - Path=/preferences/**
+              filters:
+                - AuthorizationHeaderFilter
+            - id: member-profile
+              uri: lb://MEMBER-SERVICE
+              predicates:
+                - Path=/public-profiles/**
+              filters:
+                - AuthorizationHeaderFilter
+            - id: bookmark
+              uri: lb://RECRUIT-SERVICE
+              predicates: Path=/bookmark/**
+              filters:
+                - AuthorizationHeaderFilter
+            - id: member-auth
+              uri: lb://MEMBER-SERVICE
+              predicates:
+                - Path=/auth/**
+              filters:
+                - AuthorizationHeaderFilter
+            - id: member-ocr
+              uri: lb://MEMBER-SERVICE
+              predicates:
+                - Path=/ocr/**
+                - Method=POST
+              filters:
+                - AuthorizationHeaderFilter
+            - id: recruit
+              uri: lb://RECRUIT-SERVICE
+              predicates: Path=/recruit/**
+              filters:
+                - AuthorizationHeaderFilter
+            - id: alarm
+              uri: lb://ALARM-SERVICE
+              predicates: Path=/alarm/**
+              filters:
+                - AuthorizationHeaderFilter
+            - id: apply
+              uri: lb://RECRUIT-SERVICE
+              predicates: Path=/apply/**
+              filters:
+                - AuthorizationHeaderFilter
+            - id: member
+              uri: lb://MEMBER-SERVICE
+              predicates: Path=/members/**
+              filters:
+                - AuthorizationHeaderFilter
+            - id: comment
+              uri: lb://RECRUIT-SERVICE
+              predicates: Path=/comments/**
+              filters:
+                - AuthorizationHeaderFilter
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-service:8761/eureka/
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway
+
+jwt:
+  secret: ${JWT_SECRET_KEY}
+  access-token-expire-time: 86400000
+  refresh-token-expire-time: 604800000
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.web: DEBUG

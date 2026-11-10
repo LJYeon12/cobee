@@ -1,0 +1,3 @@
+Built-in image_gen tool.
+
+Use case: text-localization. Edit the supplied infographic with exactly one text replacement: in the mint badge at the top-left corner of the RIGHT panel, replace the Korean text "개선 설계" with "변경". Center "변경" inside that same badge using the existing dark-teal Korean font, weight, and size. Preserve the original badge rectangle dimensions and placement. Preserve every other word, diagram, arrow, color, spacing, border, layout, and the full image dimensions exactly. No other text edits or design changes.

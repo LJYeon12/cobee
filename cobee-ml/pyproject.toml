@@ -1,0 +1,12 @@
+[tool.black]
+line-length = 88
+target-version = ["py310"]
+
+[tool.pytest.ini_options]
+minversion = "8.4.2"
+testpaths = ["tests/unit"]
+pythonpath = ["."]
+addopts = "-ra --strict-config --strict-markers"
+markers = [
+    "integration: requires database, backend, or model training services",
+]

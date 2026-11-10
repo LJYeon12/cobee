@@ -1,0 +1,7 @@
+# Minimal environment for unit tests and static checks.
+# Reuse the existing version pins without installing DB or ML dependencies.
+-c requirements.txt
+pytest
+black
+flake8
+pydantic

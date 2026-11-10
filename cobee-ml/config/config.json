@@ -1,0 +1,77 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2025-10-29T15:22:05.276819",
+  "phase": {
+    "current": "P2",
+    "interaction_count": 271,
+    "auto_transition_enabled": true,
+    "use_simple_threshold": true,
+    "thresholds": {
+      "P1": {
+        "min": 0,
+        "max": 99,
+        "description": "Cold Start - Rule-Based Only"
+      },
+      "P2": {
+        "min": 100,
+        "max": 999,
+        "description": "Transition - Hybrid with Rule Dominant"
+      },
+      "P3": {
+        "min": 1000,
+        "max": null,
+        "description": "Mature - MF Dominant"
+      }
+    }
+  },
+  "weights": {
+    "P1": {
+      "rule_based": 1.0,
+      "matrix_factorization": 0.0
+    },
+    "P2": {
+      "rule_based": 0.6,
+      "matrix_factorization": 0.4,
+      "interpolation": "linear",
+      "rejected_penalty": true
+    },
+    "P3": {
+      "rule_based": 0.2,
+      "matrix_factorization": 0.8,
+      "interpolation": "linear",
+      "rejected_penalty": true
+    }
+  },
+  "recommendation": {
+    "default_limit": 20,
+    "min_score_threshold": 0.3,
+    "diversity_factor": 0.1,
+    "include_explanations": true
+  },
+  "features": {
+    "use_comment_signals": true,
+    "use_bookmark_signals": true,
+    "use_apply_record_signals": true,
+    "temporal_decay_enabled": false
+  },
+  "model": {
+    "mf_algorithm": "SVD",
+    "n_factors": 50,
+    "n_epochs": 20,
+    "lr_all": 0.005,
+    "reg_all": 0.02,
+    "min_training_samples": 100
+  },
+  "cache": {
+    "enabled": true,
+    "ttl_seconds": 3600,
+    "invalidation_on_interaction": false
+  },
+  "rule_based": {
+    "feature_weights": {
+      "gender": 5.0,
+      "age": 3.0
+    },
+    "distance_metric": "euclidean"
+  }
+}

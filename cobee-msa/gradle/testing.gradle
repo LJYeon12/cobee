@@ -1,0 +1,37 @@
+import org.gradle.api.tasks.testing.Test
+
+dependencies {
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test', Test) {
+    description = 'Runs unit tests without application services.'
+    useJUnitPlatform {
+        excludeTags 'integration'
+    }
+}
+
+tasks.register('integrationTest', Test) {
+    description = 'Runs application context tests that need service configuration.'
+    group = 'verification'
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+    useJUnitPlatform {
+        includeTags 'integration'
+    }
+    shouldRunAfter tasks.named('test')
+}
+
+tasks.withType(Test).configureEach {
+    doFirst {
+        def runtimeClasspathFile = new File(temporaryDir, 'withdrawal-runtime-classpath.txt')
+        runtimeClasspathFile.parentFile.mkdirs()
+        runtimeClasspathFile.setText(sourceSets.test.runtimeClasspath.asPath, 'UTF-8')
+        systemProperty 'withdrawal.test.classpath.file', runtimeClasspathFile.absolutePath
+    }
+    testLogging {
+        events 'failed', 'skipped'
+        exceptionFormat 'short'
+    }
+}

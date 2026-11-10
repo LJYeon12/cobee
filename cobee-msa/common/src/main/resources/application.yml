@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: common
+
+  config:
+    import: "optional:configserver:"   # 추가가 핵심
+  cloud:
+    config:
+      uri: http://config-service:8888       # config server 주소

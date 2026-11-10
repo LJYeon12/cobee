@@ -1,0 +1,33 @@
+# Analysis scope: source, schemas, configuration, CI, and README.
+graphify-out/
+.codex/
+.agents/
+AGENTS.md
+.graphifyignore
+**/.git/
+**/node_modules/
+**/.gradle/
+**/build/
+**/target/
+**/__pycache__/
+**/.venv/
+**/venv/
+**/.pytest_cache/
+**/gradle/wrapper/
+**/gradlew
+**/gradlew.bat
+**/HELP.md
+**/.github/ISSUE_TEMPLATE/
+**/.github/pull_request_template.md
+**/.env
+**/.env.*
+**/*.log
+**/*.jar
+**/*.class
+cobee-ml/logs/
+cobee-ml/data/
+cobee-ml/models/
+cobee-ml/mlruns/
+cobee-ml/mlartifacts/
+# Test snapshots and isolated PostgreSQL runtime are not product sources.
+diagnostics/2026-10-31/withdrawal-tdd/
